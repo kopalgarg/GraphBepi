@@ -38,13 +38,19 @@ args = parser.parse_args()
 device='cpu' if args.gpu==-1 else f'cuda:{args.gpu}'
 seed_everything(args.seed)
 print('Preparing...')
+
 tmp_root='./data/tmp'
 if not os.path.exists(args.output):
     os.makedirs(args.output)
 if not os.path.exists(tmp_root):
     os.makedirs(tmp_root)
     os.system(f'cd {tmp_root} && mkdir PDB purePDB feat dssp graph')
+    
+torch.cuda.empty_cache()
 esm2, _=esm.pretrained.esm2_t36_3B_UR50D()
+
+esm2.to(torch.float16)
+
 esm2=esm2.to(device)
 esm2.eval()
 if args.pdb:
@@ -129,7 +135,3 @@ for i in range(len(testset)):
     df.to_csv(f'{args.output}/{testset.data[i].name}.csv',index=False)
 os.remove(f'{args.output}/result.pkl')
 print('Fin')
-
-        
-
-
