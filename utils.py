@@ -8,6 +8,8 @@ import torch.nn.functional as F
 from tqdm import tqdm,trange
 from preprocess import *
 from graph_construction import calcPROgraph
+import urllib.request
+import requests
 # prot_amino2id={
 #     '<pad>': 0, '</s>': 1, '<unk>': 2, 'A': 3,
 #     'L': 4, 'G': 5, 'V': 6, 'S': 7,
@@ -52,7 +54,8 @@ class chain:
         self.label=torch.zeros_like(self.amino)
         self.sequence=''.join(self.sequence)
     def extract(self,model,device,path):
-        if len(self)>1024 or model is None:
+
+        if model is None: #or len(self)>1024 
             return
         f=lambda x:model(x.to(device).unsqueeze(0),[36])['representations'][36].squeeze(0).cpu()
         with torch.no_grad():
@@ -118,23 +121,16 @@ def collate_fn(batch):
 def extract_chain(root,pid,chain,force=False):
     if not force and os.path.exists(f'{root}/purePDB/{pid}_{chain}.pdb'):
         return True
-    if not os.path.exists(f'{root}/PDB/{pid}.pdb'):
-        retry=5
-        pdb=None
-        while retry>0:
-            try:
-                with rq.get(f'https://files.rcsb.org/download/{pid}.pdb') as f:
-                    if f.status_code==200:
-                        pdb=f.content
-                        break
-            except:
-                retry-=1
-                continue
-        if pdb is None:
-            print(f'PDB file {pid} failed to download')
-            return False
-        with open(f'{root}/PDB/{pid}.pdb','wb') as f:
-            f.write(pdb)
+    # Edits: It was initially returining 404, so I edited this part a bit
+    
+    # create file if it doesn't exist 
+    open(f'{root}/PDB/{pid}.pdb', 'a+').close()
+    
+    
+    url = 'https://files.rcsb.org/download/' + pid + '.pdb'
+    response = requests.get(url, allow_redirects=True)
+        
+    open(f'{root}/PDB/{pid}.pdb', 'wb').write(response.content)
     lines=[]
     with open(f'{root}/PDB/{pid}.pdb','r') as f:
         for line in f:
