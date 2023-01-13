@@ -1,3 +1,32 @@
+Install dependencies
+
+```
+pip install torchmetrics pytorch_lightning tool fair-esm
+
+pip install "fair-esm[esmfold]"
+
+pip install 'dllogger @ git+https://github.com/NVIDIA/dllogger.git'
+
+pip install 'openfold @ git+https://github.com/aqlaboratory/openfold.git@4b41059694619831a7db195b7e0988fc4ff3a307'
+
+pip3 install lightning
+
+pip3 install tensorflow --user
+
+pip3 install omegaconf
+```
+
+Re-install mkdssp using conda
+
+```
+conda install -c salilab dssp
+```
+
+Example notebook
+https://github.com/kopalgarg24/GraphBepi/blob/main/graphbepi.ipynb
+
+
+__
 # Intro  
 GraphBepi is a novel graph-based method for accurate B-cell epitope prediction, which is able to capture
 spatial information using the predicted protein structures through the edge-enhanced deep graph neural network.
