@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader,Dataset
 warnings.simplefilter('ignore')
 class PDB(Dataset):
     def __init__(
-        self,mode='train',fold=-1,root='./data/WZYdata',self_cycle=False
+        self,mode='train',fold=-1,root='./data/BCE_633',self_cycle=False
     ):
         self.root=root
         assert mode in ['train','val','test']
@@ -25,6 +25,7 @@ class PDB(Dataset):
         cv=10
         inter=len(idx)//cv
         ex=len(idx)%cv
+
         if mode=='train':
             order=[]
             for i in range(cv):
@@ -74,6 +75,7 @@ if __name__ == "__main__":
         dataset=pk.load(f)
     dates={i.name:i.date for i in dataset}
     filt_data=[]
+    
     for i in dataset:
         if len(i)<1024 and i.label.sum()>0:
             filt_data.append(i)
@@ -100,4 +102,3 @@ if __name__ == "__main__":
     with open(f'{root}/test.pkl','wb') as f:
         pk.dump(testset,f)
     idx=np.array(dates_).argsort()
-    np.save(f'{root}/cross-validation.npy',idx)
