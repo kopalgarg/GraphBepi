@@ -13,6 +13,8 @@ from torch.utils.data import DataLoader,Dataset
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import Callback,EarlyStopping,ModelCheckpoint
 warnings.simplefilter('ignore')
+from IPython.core.debugger import set_trace
+
 def seed_everything(seed=2022):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -61,10 +63,11 @@ model=GraphBepi(
     result_path=f'./model/{log_name}', # path to save temporary result file of testset
 )
 
-es=EarlyStopping('val_AUPRC',patience=40,mode='max')
+es=EarlyStopping('val_AUROC',patience=40,mode='max')
+
 mc=ModelCheckpoint(
     f'./model/{log_name}/',f'model_{args.fold}',
-    'val_AUPRC',
+    'val_AUROC',
     mode='max',
     save_weights_only=True, 
 )
@@ -73,6 +76,7 @@ logger = TensorBoardLogger(
     name=log_name+f'_{args.fold}'
 )
 cb=[mc,es]
+
 trainer = pl.Trainer(
     gpus=[args.gpu] if args.gpu!=-1 else None, 
     max_epochs=args.epochs, callbacks=cb,

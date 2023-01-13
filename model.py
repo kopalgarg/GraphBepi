@@ -80,7 +80,6 @@ class GraphBepi(pl.LightningModule):
         if self.metrics is not None:
             result=self.metrics.calc_prc(pred.detach().clone(),y.detach().clone())
             self.log('train_auc', result['AUROC'], on_epoch=True, prog_bar=True, logger=True)
-            self.log('train_prc', result['AUPRC'], on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -99,7 +98,6 @@ class GraphBepi(pl.LightningModule):
         if self.metrics is not None:
             result=self.metrics(pred.detach().clone(),y.detach().clone())
             self.log('val_AUROC', result['AUROC'], on_epoch=True, prog_bar=True, logger=True)
-            self.log('val_AUPRC', result['AUPRC'], on_epoch=True, prog_bar=True, logger=True)
             self.log('val_mcc', result['MCC'], on_epoch=True, prog_bar=True, logger=True)
             self.log('val_f1', result['F1'], on_epoch=True, prog_bar=True, logger=True)
 
@@ -123,7 +121,6 @@ class GraphBepi(pl.LightningModule):
             result=self.metrics(pred.detach().clone(),y.detach().clone())
             self.log('test_loss', loss.cpu().item(), on_epoch=True, prog_bar=True, logger=True)
             self.log('test_AUROC', result['AUROC'], on_epoch=True, prog_bar=True, logger=True)
-            self.log('test_AUPRC', result['AUPRC'], on_epoch=True, prog_bar=True, logger=True)
             self.log('test_recall', result['RECALL'], on_epoch=True, prog_bar=True, logger=True)
             self.log('test_precision', result['PRECISION'], on_epoch=True, prog_bar=True, logger=True)
             self.log('test_f1', result['F1'], on_epoch=True, prog_bar=True, logger=True)
