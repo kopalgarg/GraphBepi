@@ -76,9 +76,8 @@ def transform_dssp(dssp_feature):
 def get_dssp(ID,root):
     if not os.path.exists(f"{root}/dssp/"):
         os.mkdir(f"{root}/dssp/")
-    os.system(f"./mkdssp/mkdssp -i {root}/purePDB/{ID}.pdb -o {root}/dssp/{ID}.dssp")
-    if not os.path.exists(f"{root}/dssp/" + ID + ".dssp"):
-        return None
+    os.system(f"mkdssp -i {root}/purePDB/{ID}.pdb -o {root}/dssp/{ID}.dssp")
+    
     dssp_seq, dssp_matrix,position = process_dssp(f"{root}/dssp/" + ID + ".dssp")
     np.save(f"{root}/dssp/" + ID, transform_dssp(dssp_matrix))
     np.save(f"{root}/dssp/"+ID+"_pos",position)
